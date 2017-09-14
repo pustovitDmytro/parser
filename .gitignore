@@ -1,3 +1,6 @@
 *.sublime*
 .idea
+*.exe
 *.html
+__pycache__
+*.log

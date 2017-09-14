@@ -19,7 +19,7 @@ class Page():
 	def __init__(self, link):
 		self.link = link
 	def StartDriver(self):
-		driver = webdriver.Firefox()
+		driver = webdriver.Chrome()
 		driver.get(self.link)
 		self.driver = driver
 	def FinishDriver(self):
