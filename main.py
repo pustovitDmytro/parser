@@ -7,12 +7,10 @@ import time
 from abc import ABCMeta
 from selenium import webdriver
 import re
+from selenium.webdriver.common.keys import Keys
+from PIL import Image
 
-BaseUrl =""
-TestUrl = "test/"
-
-def main():
-	print("main")
+dir_screenshots="screenshots/"
 
 class Page():
 	__metaclass__ = ABCMeta
@@ -22,7 +20,32 @@ class Page():
 		driver = webdriver.Chrome()
 		driver.get(self.link)
 		self.driver = driver
+		time.sleep(1)
+	def FindCss(self,css,save='last'):
+		element = self.driver.find_element_by_css_selector(css)
+		self.ScreenShot(element,save)
+		time.sleep(1)
+		return element
+	def Type(self,element, text, ENTER=False, save='last'):
+		element.send_keys(text)
+		time.sleep(1)
+		self.ScreenShot(element,save)
+		if ENTER:
+			element.send_keys(Keys.ENTER)
+		time.sleep(1)
+	def ScreenShot(self,element,name):
+		self.driver.save_screenshot(dir_screenshots+name)
+		location = element.location
+		size = element.size
+		im = Image.open(dir_screenshots+name)
+		left = location['x']
+		top = location['y']
+		right = location['x'] + size['width']
+		bottom = location['y'] + size['height']
+		im = im.crop((left, top, right, bottom))
+		im.save(dir_screenshots+name+'.jpg')
 	def FinishDriver(self):
+		time.sleep(5)
 		self.driver.close()
 	def StartBS(self, test):
 		loop = asyncio.get_event_loop()
@@ -36,9 +59,3 @@ class Page():
 		async with aiohttp.ClientSession(loop=loop) as session:
 			html = await self.fetch(session, url)
 			return html
-
-class MainPage(Page):
-	def __init__(self, link, test=False):
-		super(MainPage,self).__init__(link)
-if __name__ == '__main__':
-    main()
