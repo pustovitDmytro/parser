@@ -28,6 +28,11 @@ $ python script.py
 │   └── main.js              # Server application entry point
 ```
 
+## Tests
+
+Best way to test web-parser, is to parse some site with data templates. For instance
+
+
 ## Related Projects
 
 There are some  more boilerplates that I'm working on:
