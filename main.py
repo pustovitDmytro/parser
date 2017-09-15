@@ -11,6 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from PIL import Image
 
 dir_screenshots="screenshots/"
+dir_results="results/"
 
 class Page():
 	__metaclass__ = ABCMeta
@@ -21,9 +22,10 @@ class Page():
 		driver.get(self.link)
 		self.driver = driver
 		time.sleep(1)
-	def FindCss(self,css,save='last'):
-		element = self.driver.find_element_by_css_selector(css)
-		self.ScreenShot(element,save)
+	def FindCss(self,css,save='last',many=false):
+		elements = self.driver.find_elements_by_css_selector(css)
+		for element in elements
+			self.ScreenShot(element,save)
 		time.sleep(1)
 		return element
 	def Type(self,element, text, ENTER=False, save='last'):
@@ -34,10 +36,10 @@ class Page():
 			element.send_keys(Keys.ENTER)
 		time.sleep(1)
 	def ScreenShot(self,element,name):
-		self.driver.save_screenshot(dir_screenshots+name)
+		self.driver.save_screenshot(dir_screenshots+name+"full.jpg")
 		location = element.location
 		size = element.size
-		im = Image.open(dir_screenshots+name)
+		im = Image.open(dir_screenshots+name+"full.jpeg")
 		left = location['x']
 		top = location['y']
 		right = location['x'] + size['width']
@@ -47,15 +49,16 @@ class Page():
 	def FinishDriver(self):
 		time.sleep(5)
 		self.driver.close()
-	def StartBS(self, test):
+	def GetHtml(self):
 		loop = asyncio.get_event_loop()
-		HTML = open(self._link,'r').read() if test else loop.run_until_complete(self.get_html(loop,self._link))
-		bs = BeautifulSoup(HTML, "html.parser")
-	async def fetch(self,session, url):
+		return loop.run_until_complete(self._get_html(loop,self._link))
+	def StartBS(self, HTML)
+		self.bs = BeautifulSoup(HTML, "html.parser")
+	async def _fetch(self,session, url):
 		with async_timeout.timeout(10):
 			async with session.get(url) as response:
 				return await response.text()
-	async def get_html(self,loop,url):
+	async def _get_html(self,loop,url):
 		async with aiohttp.ClientSession(loop=loop) as session:
 			html = await self.fetch(session, url)
 			return html
